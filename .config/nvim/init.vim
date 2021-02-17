@@ -337,6 +337,8 @@ map L $
 " ,c will copy entire buffer into clipboard
 "noremap <leader>p :read !xsel --clipboard --output<cr>
 noremap <leader>p  "+p
+noremap <leader>[  :Files<cr>
+noremap <leader>h  :nohlsearch<cr>
 noremap <leader>y  "+y
 "noremap <leader>c :w !xsel -ib<cr><cr>
 
@@ -543,7 +545,8 @@ let g:coc_global_extensions = [
 			\ 'coc-css',
 			\ 'coc-html',
 			\ 'coc-phpls',
-			\ 'coc-vetur'
+			\ 'coc-vetur',
+			\'coc-explorer'
 			\]
 
 
