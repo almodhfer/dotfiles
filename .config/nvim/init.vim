@@ -290,6 +290,7 @@ set listchars=nbsp:¬,extends:»,precedes:«,trail:•
 nnoremap ; :
 let g:enable_spelunker_vim = 1
 
+set spellfile=~/.config/nvim/spell/en.utf-8.add
 " Ctrl+c and Ctrl+j as Esc
 " Ctrl-j is a little awkward unfortunately:
 " https://github.com/neovim/neovim/issues/5916
