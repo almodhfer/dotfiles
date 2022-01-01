@@ -8,4 +8,7 @@
   "python.linting.mypyPath": "mypy",
   "python.analysis.autoImportCompletions": true,
   "python.formatting.provider": "black",
+  "cSpell.userWords": [
+    "require'telescope"
+  ],
 }

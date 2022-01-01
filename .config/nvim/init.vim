@@ -34,6 +34,14 @@ Plug 'machakann/vim-highlightedyank'
 "Plug 'andymass/vim-matchup'
 Plug 'tpope/vim-eunuch'
 
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-telescope/telescope-media-files.nvim'
+Plug 'nvim-telescope/telescope-project.nvim'
+Plug 'TC72/telescope-tele-tabby.nvim'
+
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
+
 
 
 
@@ -102,6 +110,7 @@ endif
 " Colors
 set background=dark
 
+set termguicolors
 hi Normal ctermbg=NONE
 " Get syntax
 syntax on
@@ -471,6 +480,7 @@ endif
 
 
 colorscheme base16-gruvbox-dark-hard
+colorscheme base16-onedark
 "colorscheme gruvbox
 
 
@@ -716,3 +726,55 @@ set statusline+=\ %l:%c
 set statusline+=\ }]
 
 autocmd BufNewFile,BufRead *.blade.php set ft=html
+
+
+" Find files using Telescope command-line sugar.
+nnoremap <leader>ff <cmd>Telescope find_files<cr>
+nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+nnoremap <leader>; <cmd>Telescope buffers<cr>
+nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+
+
+lua << EOF
+require('telescope').setup{
+  defaults = {
+    -- Default configuration for telescope goes here:
+    -- config_key = value,
+    mappings = {
+      i = {
+        -- map actions.which_key to <C-h> (default: <C-/>)
+        -- actions.which_key shows the mappings for your picker,
+        -- e.g. git_{create, delete, ...}_branch for the git_branches picker
+        ["<C-h>"] = "which_key"
+      }
+    }
+  },
+  pickers = {
+    -- Default configuration for builtin pickers goes here:
+    -- picker_name = {
+    --   picker_config_key = value,
+    --   ...
+    -- }
+    -- Now the picker_config_key will be applied every time you call this
+    -- builtin picker
+  },
+  extensions = {
+    -- Your extension configuration goes here:
+    -- extension_name = {
+    --   extension_config_key = value,
+    -- }
+    -- please take a look at the readme of the extension you want to configure
+  }
+}
+
+require('telescope').load_extension('media_files')
+require'telescope'.load_extension('project')
+require'telescope'.load_extension("tele_tabby")
+--require('telescope').extensions.tele_tabby.list()
+EOF
+
+nnoremap <Leader>m :lua require('telescope').extensions.media_files.media_files()<cr>
+"nnoremap <Leader>ww  :lua require'telescope'.extensions.project.project{}<CR>
+"nnoremap <Leader>y :lua require'telescope'.extensions.tele_tabby.tele_tabby{}<CR>
+nnoremap <Leader>t :Telescope tele_tabby list<cr>
+nnoremap <Leader>, :lua require'telescope.builtin'.builtin{}<cr>
