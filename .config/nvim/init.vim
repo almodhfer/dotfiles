@@ -28,17 +28,24 @@ Plug 'yuki-yano/fzf-preview.vim', { 'branch': 'release/rpc' }
 Plug 'sheerun/vim-polyglot'
 Plug 'kamykn/spelunker.vim'
 " GUI enhancements
+
+Plug 'dhruvasagar/vim-zoom'
 Plug 'sainnhe/gruvbox-material'
 "Plug 'itchyny/lightline.vim'
 Plug 'machakann/vim-highlightedyank'
 "Plug 'andymass/vim-matchup'
 Plug 'tpope/vim-eunuch'
 
+Plug 'akinsho/toggleterm.nvim'
+
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-media-files.nvim'
+
+Plug 'nvim-telescope/telescope-fzy-native.nvim'
 Plug 'nvim-telescope/telescope-project.nvim'
 Plug 'TC72/telescope-tele-tabby.nvim'
+Plug 'nvim-telescope/telescope-file-browser.nvim'
 
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
 
@@ -163,7 +170,7 @@ let java_ignore_javadoc=1
 "let g:latex_fold_sections = []
 
 " Open hotkeys
-map <C-p> :Files<CR>
+"map <C-p> :Files<CR>
 map <C-l> :VimtexCompile<CR>
 nmap <leader>; :Buffers<CR>
 
@@ -296,8 +303,7 @@ set listchars=nbsp:¬,extends:»,precedes:«,trail:•
 " # Keyboard shortcuts
 " =============================================================================
 " ; as :
-nnoremap ; :
-let g:enable_spelunker_vim = 1
+
 
 set spellfile=~/.config/nvim/spell/en.utf-8.add
 " Ctrl+c and Ctrl+j as Esc
@@ -347,7 +353,7 @@ map L $
 " ,c will copy entire buffer into clipboard
 "noremap <leader>p :read !xsel --clipboard --output<cr>
 noremap <leader>p  "+p
-noremap <leader>[  :Files<cr>
+"noremap <leader>[  :Files<cr>
 noremap <leader>h  :nohlsearch<cr>
 noremap <leader>y  "+y
 "noremap <leader>c :w !xsel -ib<cr><cr>
@@ -515,7 +521,7 @@ autocmd BufWritePost *.php silent! call PhpCsFixerFixFile()
 
 
 " fzf
-nnoremap <c-p> :GFiles<cr>
+"nnoremap <c-p> :GFiles<cr>
 
 "nmap <C-n> :NERDTreeToggle<CR>
 "nmap <leader>n :NERDTreeFind<CR>
@@ -681,7 +687,7 @@ nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list
 nnoremap <silent> ,p  :<C-u>CocListResume<R>
 
-nmap <leader>f <Plug>(coc-fix-current)
+"nmap <leader>f <Plug>(coc-fix-current)
 
 let g:kite_supported_languages = []
 
@@ -729,8 +735,8 @@ autocmd BufNewFile,BufRead *.blade.php set ft=html
 
 
 " Find files using Telescope command-line sugar.
-nnoremap <leader>ff <cmd>Telescope find_files<cr>
-nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+nnoremap <leader>f <cmd>Telescope find_files<cr>
+nnoremap <leader>g <cmd>Telescope live_grep<cr>
 nnoremap <leader>; <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 
@@ -757,6 +763,9 @@ require('telescope').setup{
     -- }
     -- Now the picker_config_key will be applied every time you call this
     -- builtin picker
+    buffers = {
+      sort_lastused = true
+    }
   },
   extensions = {
     -- Your extension configuration goes here:
@@ -764,17 +773,88 @@ require('telescope').setup{
     --   extension_config_key = value,
     -- }
     -- please take a look at the readme of the extension you want to configure
+    project = {
+      base_dirs = {
+        --'~/inertia-frontend',
+        {'/home/almodhfer/Projects/stats/backend'},
+        --{'~/dev/src3', max_depth = 4},
+      },
+      hidden_files = true -- default: false
+
+      },
+     fzy_native = {
+            override_generic_sorter = false,
+            override_file_sorter = true,
+        }
   }
 }
+
 
 require('telescope').load_extension('media_files')
 require'telescope'.load_extension('project')
 require'telescope'.load_extension("tele_tabby")
---require('telescope').extensions.tele_tabby.list()
+--require('telescope').load_extension('fzy_native')
 EOF
 
 nnoremap <Leader>m :lua require('telescope').extensions.media_files.media_files()<cr>
-"nnoremap <Leader>ww  :lua require'telescope'.extensions.project.project{}<CR>
+nnoremap <Leader>ww  :lua require'telescope'.extensions.project.project{}<CR>
 "nnoremap <Leader>y :lua require'telescope'.extensions.tele_tabby.tele_tabby{}<CR>
 nnoremap <Leader>t :Telescope tele_tabby list<cr>
 nnoremap <Leader>, :lua require'telescope.builtin'.builtin{}<cr>
+
+
+" terminal it is perfered to use another config in lua file 
+" set
+let g:toggleterm_terminal_mapping = '<C-t>'
+" or manually...
+autocmd TermEnter term://*toggleterm#*
+      \ tnoremap <silent><c-t> <Cmd>exe v:count1 . "ToggleTerm"<CR>
+
+" By applying the mappings this way you can pass a count to your
+" mapping to open a specific window.
+" For example: 2<C-t> will open terminal 2
+nnoremap <silent><c-t> <Cmd>exe v:count1 . "ToggleTerm"<CR>
+inoremap <silent><c-t> <Esc><Cmd>exe v:count1 . "ToggleTerm"<CR>
+nnoremap <Leader>k :ToggleTermToggleAll<CR>
+
+
+" Terminal Mode
+if has('nvim')
+    autocmd TermOpen term://* :set <Esc><cr>
+
+endif
+
+if has('nvim')
+  tnoremap <Esc> <C-\><C-n>
+  tnoremap <M-[> <Esc>
+  tnoremap <C-v><Esc> <Esc>
+endif
+
+if has('nvim')
+  " Terminal mode:
+  tnoremap <M-h> <c-\><c-n><c-w>h
+  tnoremap <M-j> <c-\><c-n><c-w>j
+  tnoremap <M-k> <c-\><c-n><c-w>k
+  tnoremap <M-l> <c-\><c-n><c-w>l
+  " Insert mode:
+  inoremap <M-h> <Esc><c-w>h
+  inoremap <M-j> <Esc><c-w>j
+  inoremap <M-k> <Esc><c-w>k
+  inoremap <M-l> <Esc><c-w>l
+  " Visual mode:
+  vnoremap <M-h> <Esc><c-w>h
+  vnoremap <M-j> <Esc><c-w>j
+  vnoremap <M-k> <Esc><c-w>k
+  vnoremap <M-l> <Esc><c-w>l
+  " Normal mode:
+  nnoremap <M-h> <c-w>h
+  nnoremap <M-j> <c-w>j
+  nnoremap <M-k> <c-w>k
+  nnoremap <M-l> <c-w>l
+endif
+
+
+nnoremap <c-z> <nop>
+tnoremap <F1> <c-c>
+
+
