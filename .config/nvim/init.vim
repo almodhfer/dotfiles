@@ -27,6 +27,9 @@ Plug 'jupyter-vim/jupyter-vim'
 Plug 'yuki-yano/fzf-preview.vim', { 'branch': 'release/rpc' }
 Plug 'sheerun/vim-polyglot'
 Plug 'kamykn/spelunker.vim'
+
+Plug 'tpope/vim-commentary'
+Plug 'easymotion/vim-easymotion'
 " GUI enhancements
 
 Plug 'dhruvasagar/vim-zoom'
@@ -93,8 +96,8 @@ Plug '907th/vim-auto-save'
 "this is
 "Plug 'vim-latex/vim-latex'
 
-Plug 'suan/vim-instant-markdown', {'for': 'markdown'}
 
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
 call plug#end()
 
@@ -214,9 +217,6 @@ set hidden
 set nowrap
 set nojoinspaces
 let g:sneak#s_next = 1
-let g:vim_markdown_new_list_item_indent = 0
-let g:vim_markdown_auto_insert_bullets = 0
-let g:vim_markdown_frontmatter = 1
 set printfont=:h10
 set printencoding=utf-8
 set printoptions=paper:letter
@@ -355,7 +355,7 @@ map L $
 noremap <leader>p  "+p
 "noremap <leader>[  :Files<cr>
 noremap <leader>h  :nohlsearch<cr>
-noremap <leader>y  "+y
+noremap <leader>c  "+y
 "noremap <leader>c :w !xsel -ib<cr><cr>
 
 map <leader>y ZL
@@ -746,6 +746,7 @@ require('telescope').setup{
   defaults = {
     -- Default configuration for telescope goes here:
     -- config_key = value,
+    file_ignore_patterns = {"node_modules", "static/"},
     mappings = {
       i = {
         -- map actions.which_key to <C-h> (default: <C-/>)
@@ -776,7 +777,6 @@ require('telescope').setup{
     project = {
       base_dirs = {
         --'~/inertia-frontend',
-        {'/home/almodhfer/Projects/stats/backend'},
         --{'~/dev/src3', max_depth = 4},
       },
       hidden_files = true -- default: false
@@ -792,16 +792,50 @@ require('telescope').setup{
 
 require('telescope').load_extension('media_files')
 require'telescope'.load_extension('project')
+--$HOME/.local/share/nvim/telescope-projects.txt
 require'telescope'.load_extension("tele_tabby")
+require("telescope").load_extension "file_browser"
+
+require("toggleterm").setup{
+  -- size can be a number or function which is passed the current terminal
+  hide_numbers = true, -- hide the number column in toggleterm buffers
+  shade_filetypes = {},
+  shade_terminals = true,
+  shading_factor = '<number>', -- the degree by which to darken to terminal colour, default: 1 for dark backgrounds, 3 for light
+  start_in_insert = false,
+  insert_mappings = true, -- whether or not the open mapping applies in insert mode
+  persist_size = true,
+  direction = 'float', --| 'horizontal' | 'window' | 'float',
+  close_on_exit = true, -- close the terminal window when the process exits
+  shell = vim.o.shell, -- change the default shell
+  -- This field is only relevant if direction is set to 'float'
+  float_opts = {
+    -- The border key is *almost* the same as 'nvim_open_win'
+    -- see :h nvim_open_win for details on borders however
+    -- the 'curved' border is a custom border type
+    -- not natively supported but implemented in this plugin.
+    border =  'curved', --'single' | 'double' | 'shadow' | 'curved' | ... other options supported by win open
+    winblend = 3,
+    highlights = {
+      border = "Normal",
+      background = "Normal",
+    }
+  }
+}
+
+
 --require('telescope').load_extension('fzy_native')
 EOF
 
+
 nnoremap <Leader>m :lua require('telescope').extensions.media_files.media_files()<cr>
-nnoremap <Leader>ww  :lua require'telescope'.extensions.project.project{}<CR>
-"nnoremap <Leader>y :lua require'telescope'.extensions.tele_tabby.tele_tabby{}<CR>
+nnoremap <Leader>ww  :lua require'telescope'.extensions.project.project{ display_type = 'full' }<CR>
+
+
 nnoremap <Leader>t :Telescope tele_tabby list<cr>
 nnoremap <Leader>, :lua require'telescope.builtin'.builtin{}<cr>
 
+nnoremap  <leader>ff :lua require('telescope').extensions.file_browser.file_browser()<CR>
 
 " terminal it is perfered to use another config in lua file 
 " set
@@ -813,16 +847,10 @@ autocmd TermEnter term://*toggleterm#*
 " By applying the mappings this way you can pass a count to your
 " mapping to open a specific window.
 " For example: 2<C-t> will open terminal 2
-nnoremap <silent><c-t> <Cmd>exe v:count1 . "ToggleTerm"<CR>
-inoremap <silent><c-t> <Esc><Cmd>exe v:count1 . "ToggleTerm"<CR>
+nnoremap <silent><Leader>t <Cmd>exe v:count1 . "ToggleTerm"<CR>
+"inoremap <silent><Leader>t <Esc><Cmd>exe v:count1 . "ToggleTerm"<CR>
 nnoremap <Leader>k :ToggleTermToggleAll<CR>
 
-
-" Terminal Mode
-if has('nvim')
-    autocmd TermOpen term://* :set <Esc><cr>
-
-endif
 
 if has('nvim')
   tnoremap <Esc> <C-\><C-n>
