@@ -26,7 +26,8 @@ Plug 'airblade/vim-gitgutter'
 Plug 'jupyter-vim/jupyter-vim'
 Plug 'yuki-yano/fzf-preview.vim', { 'branch': 'release/rpc' }
 Plug 'sheerun/vim-polyglot'
-Plug 'kamykn/spelunker.vim'
+"Plug 'kamykn/spelunker.vim'
+Plug 'Pocco81/AutoSave.nvim'
 
 Plug 'tpope/vim-commentary'
 Plug 'easymotion/vim-easymotion'
@@ -40,6 +41,8 @@ Plug 'machakann/vim-highlightedyank'
 Plug 'tpope/vim-eunuch'
 
 Plug 'akinsho/toggleterm.nvim'
+
+Plug 's1n7ax/nvim-terminal'
 
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
@@ -56,9 +59,9 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend upda
 
 
 " Fuzzy finder
-Plug 'airblade/vim-rooter'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junegunn/fzf.vim'
+"Plug 'airblade/vim-rooter'
+"Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+"Plug 'junegunn/fzf.vim'
 
 " Semantic language support
 "Plug 'preservim/nerdtree'
@@ -692,11 +695,10 @@ nnoremap <silent> ,p  :<C-u>CocListResume<R>
 let g:kite_supported_languages = []
 
 " Override highlight setting.
-highlight SpelunkerSpellBad cterm=underline ctermfg=247 gui=underline guifg=#9e9e9e
-highlight SpelunkerComplexOrCompoundWord cterm=underline ctermfg=NONE gui=underline guifg=NONE
-let g:enable_spelunker_vim_on_readonly = 1
+"highlight SpelunkerSpellBad cterm=underline ctermfg=247 gui=underline guifg=#9e9e9e
+"highlight SpelunkerComplexOrCompoundWord cterm=underline ctermfg=NONE gui=underline guifg=NONE
+"let g:enable_spelunker_vim_on_readonly = 1
 
-let g:auto_save = 0  " enable AutoSave on Vim startup
 nmap <leader>e :CocCommand explorer<CR>
 
 autocmd FileType html setlocal ts=2 sts=2 sw=2
@@ -731,7 +733,7 @@ set statusline+=\ %p%%
 set statusline+=\ %l:%c
 set statusline+=\ }]
 
-autocmd BufNewFile,BufRead *.blade.php set ft=html
+"autocmd BufNewFile,BufRead *.blade.php set ft=html
 
 
 " Find files using Telescope command-line sugar.
@@ -789,21 +791,39 @@ require('telescope').setup{
   }
 }
 
+require("autosave").setup(
+    {
+        enabled = false,
+        events = {"InsertLeave", "TextChanged"},
+        conditions = {
+            exists = true,
+            filename_is_not = {},
+            filetype_is_not = {},
+            modifiable = true
+        },
+        write_all_buffers = false,
+        on_off_commands = true,
+        clean_command_line_interval = 0,
+        debounce_delay = 135
+    }
+)
 
 require('telescope').load_extension('media_files')
 require'telescope'.load_extension('project')
 --$HOME/.local/share/nvim/telescope-projects.txt
-require'telescope'.load_extension("tele_tabby")
+--require'telescope'.load_extension("tele_tabby")
 require("telescope").load_extension "file_browser"
-
+--require('nvim-terminal').setup()
 require("toggleterm").setup{
   -- size can be a number or function which is passed the current terminal
-  hide_numbers = true, -- hide the number column in toggleterm buffers
+
+  open_mapping = [[<Leader>j]],
+  hide_numbers = false, -- hide the number column in toggleterm buffers
   shade_filetypes = {},
   shade_terminals = true,
-  shading_factor = '<number>', -- the degree by which to darken to terminal colour, default: 1 for dark backgrounds, 3 for light
+  shading_factor = 3, -- the degree by which to darken to terminal colour, default: 1 for dark backgrounds, 3 for light
   start_in_insert = false,
-  insert_mappings = true, -- whether or not the open mapping applies in insert mode
+  insert_mappings =false, -- whether or not the open mapping applies in insert mode
   persist_size = true,
   direction = 'float', --| 'horizontal' | 'window' | 'float',
   close_on_exit = true, -- close the terminal window when the process exits
@@ -822,9 +842,6 @@ require("toggleterm").setup{
     }
   }
 }
-
-
---require('telescope').load_extension('fzy_native')
 EOF
 
 
@@ -832,24 +849,25 @@ nnoremap <Leader>m :lua require('telescope').extensions.media_files.media_files(
 nnoremap <Leader>ww  :lua require'telescope'.extensions.project.project{ display_type = 'full' }<CR>
 
 
-nnoremap <Leader>t :Telescope tele_tabby list<cr>
+"nnoremap <Leader>t :Telescope tele_tabby list<cr>
 nnoremap <Leader>, :lua require'telescope.builtin'.builtin{}<cr>
 
 nnoremap  <leader>ff :lua require('telescope').extensions.file_browser.file_browser()<CR>
 
 " terminal it is perfered to use another config in lua file 
 " set
-let g:toggleterm_terminal_mapping = '<C-t>'
+"let g:toggleterm_terminal_mapping = '<Leader>'
 " or manually...
-autocmd TermEnter term://*toggleterm#*
-      \ tnoremap <silent><c-t> <Cmd>exe v:count1 . "ToggleTerm"<CR>
+"autocmd TermEnter term://*toggleterm#*
+"      \ tnoremap <silent><c-t> <Cmd>exe v:count1 . "ToggleTerm"<CR>
 
 " By applying the mappings this way you can pass a count to your
 " mapping to open a specific window.
 " For example: 2<C-t> will open terminal 2
-nnoremap <silent><Leader>t <Cmd>exe v:count1 . "ToggleTerm"<CR>
+"nnoremap <silent><Leader>t <Cmd>exe v:count1 . "ToggleTerm"<CR>
 "inoremap <silent><Leader>t <Esc><Cmd>exe v:count1 . "ToggleTerm"<CR>
 nnoremap <Leader>k :ToggleTermToggleAll<CR>
+tnoremap <Leader>k :ToggleTermToggleAll<CR>
 
 
 if has('nvim')
@@ -881,8 +899,8 @@ if has('nvim')
   nnoremap <M-l> <c-w>l
 endif
 
-
 nnoremap <c-z> <nop>
 tnoremap <F1> <c-c>
+
 
 
