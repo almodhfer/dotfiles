@@ -10,6 +10,7 @@ set nocompatible
 filetype off
 call plug#begin()
 
+
 " Load plugins
 " VIM enhancements
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -32,6 +33,10 @@ Plug 'Pocco81/AutoSave.nvim'
 Plug 'tpope/vim-commentary'
 Plug 'easymotion/vim-easymotion'
 " GUI enhancements
+"
+Plug 'tpope/vim-surround'
+
+Plug 'posva/vim-vue'
 
 Plug 'dhruvasagar/vim-zoom'
 Plug 'sainnhe/gruvbox-material'
@@ -901,6 +906,3 @@ endif
 
 nnoremap <c-z> <nop>
 tnoremap <F1> <c-c>
-
-
-
