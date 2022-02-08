@@ -551,8 +551,9 @@ key_bindings:
   - { key: Subtract, mods: Control,       action: DecreaseFontSize }
   - { key: Minus,    mods: Control,       action: DecreaseFontSize }
 
-  # (Windows only)
   #- { key: Return,   mods: Alt,           action: ToggleFullscreen }
+  # (Windows only)
+  - { key: Return,   mods: Control,           action: ToggleFullscreen }
 
   # (macOS only)
   #- { key: Key0,     mods: Command, action: ResetFontSize                }
